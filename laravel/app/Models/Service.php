@@ -9,6 +9,10 @@ class Service extends Model
 {
     use HasFactory;
 
+     public $timestamps = false;
+
+     protected $primaryKey = 'service_id';
+
     protected $fillable = [
         'name',
         'capacity',
@@ -16,4 +20,9 @@ class Service extends Model
         'price',
         'image'
     ];
+
+    public function reservationItems()
+    {
+        return $this->hasMany(ReservationItem::class, 'service_id');
+    }
 }

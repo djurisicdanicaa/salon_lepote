@@ -13,7 +13,8 @@ const NavBar = () => {
             <nav className='navbar-links'>
                 <Link to="/">Početna</Link>
                 <Link to="/">Usluge</Link>
-                <Link to="/">Rezervacija termina</Link>
+                <Link to="/reservation">Rezervacija termina</Link>
+
             </nav>
         </header>
     );
