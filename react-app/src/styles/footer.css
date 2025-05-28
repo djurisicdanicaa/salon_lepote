@@ -3,7 +3,7 @@
     justify-content: flex-start; 
     align-items: center;
     gap: 40px; 
-    padding: 40px 40px;
+    padding: 10px 40px;
     background-color:   #352f44; 
     flex-wrap: wrap;
   }
@@ -41,8 +41,8 @@
   }
   
   .footer-map iframe {
-    width: 700px;
-    height: 220px;
+    width: 800px;
+    height: 170px;
     border-radius: 8px;
   }
   

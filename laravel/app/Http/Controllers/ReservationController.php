@@ -21,7 +21,7 @@ class ReservationController extends Controller
         'email' => 'required|email',
         'services' => 'required|array|min:1',
         'services.*.service_id' => 'required|exists:services,service_id',
-        'services.*.scheduled_at' => 'required|date_format:Y-m-d H:i:s', // ili Y-m-d H:i
+        'services.*.scheduled_at' => 'required|date_format:Y-m-d H:i:s', 
         'promo_code' => 'nullable|string|exists:promo_codes,code',
     ]);
 
@@ -73,7 +73,7 @@ class ReservationController extends Controller
             'client_id' => $client->client_id,
             'token' => Str::upper(Str::random(6)),
             'total_price' => $finalPrice,
-            'status' => 'na čekanju',
+            //'status' => 'aktivna',
             'used_promo_code' => $usedPromo ? $usedPromo->code : null,
             'generated_promo_code' => null,
         ]);
@@ -115,5 +115,55 @@ class ReservationController extends Controller
 
     });
 }
+
+public function show(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email',
+        'token' => 'required|string|size:6',
+    ]);
+
+    $reservation = Reservation::with([
+        'client',
+        'reservationItems.service' 
+    ])
+    ->whereHas('client', fn($q) => $q->where('email', $request->email))
+    ->where('token', $request->token)
+    ->first();
+
+    if (!$reservation) {
+        return response()->json(['error' => 'Rezervacija nije pronađena.'], 404);
+    }
+
+    $items = $reservation->reservationItems->map(function ($item) {
+        return [
+            'item_id' => $item->item_id,
+            'scheduled_at' => $item->scheduled_at,
+            'service' => [
+                'name' => $item->service->name,
+                'price' => $item->service->price,
+            ],
+        ];
+    });
+
+    $fullPrice = $items->sum('price');
+    $finalPrice = $reservation->total_price;
+    $discount = $fullPrice - $finalPrice;
+
+    return response()->json([
+        'client' => [
+            'first_name' => $reservation->client->first_name,
+            'last_name' => $reservation->client->last_name,
+        ],
+        'items' => $items,
+        'status' => $reservation->status,
+        'full_price' => $fullPrice,
+        'discount' => $discount,
+        'total_price' => $finalPrice,
+        'token' => $reservation->token, 
+    ]);
+
+}
+
 
 }

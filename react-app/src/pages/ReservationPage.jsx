@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/reservations.css';
+import { useNavigate } from 'react-router-dom';
+
 
 const ReservationPage = () => {
   const [services, setServices] = useState([]);
@@ -9,7 +11,9 @@ const ReservationPage = () => {
   const [message, setMessage] = useState('');
   const [discountPercent, setDiscountPercent] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
-  const [finalPrice, setFinalPrice] = useState(0); // cena nakon popusta
+  const [finalPrice, setFinalPrice] = useState(0); 
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     fetch('http://localhost:8000/api/services')
@@ -18,7 +22,6 @@ const ReservationPage = () => {
       .catch(err => console.error('Greška prilikom dohvatanja usluga:', err));
   }, []);
 
-  // Izračunavaj ukupnu cenu pre popusta i resetuj popust/poruke
   useEffect(() => {
     let sum = 0;
     for (let item of items) {
@@ -45,7 +48,6 @@ const ReservationPage = () => {
     setItems(updatedItems);
   };
 
-  // Setuj promo kod, resetuj popust i poruku
   const handlePromoCodeChange = (code) => {
     setPromoCode(code);
     setDiscountPercent(0);
@@ -107,7 +109,7 @@ const ReservationPage = () => {
             const messages = Object.values(data.errors).flat().join('\n');
             setMessage(messages);
         } else if (data.error) {
-            setMessage(data.error); // <-- dodato za poruke poput "Usluga nije dostupna"
+            setMessage(data.error); 
         } else {
             setMessage('Greška pri čuvanju rezervacije.');
         }
@@ -119,6 +121,7 @@ const ReservationPage = () => {
       if (data.totalPrice !== undefined) setFinalPrice(data.totalPrice);
 
       setMessage(`Uspešna rezervacija! Vaš token je: ${data.reservation_token}`);
+      navigate(`/reservation/details?email=${client.email}&token=${data.reservation_token}`);
     } catch (error) {
       console.error('Greška:', error);
       setMessage('Došlo je do greške pri slanju zahteva.');

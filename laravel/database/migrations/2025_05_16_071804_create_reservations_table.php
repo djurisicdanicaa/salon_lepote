@@ -17,15 +17,15 @@ return new class extends Migration
             $table->id('reservation_id');
             $table->string('token', 6) -> unique();
             $table->double('total_price', 8, 2);
-            $table->enum('status', ['na čekanju', 'potvrđeno', 'otkazano'])->default('na čekanju');
+            $table->enum('status', ['aktivna', 'potvrđeno', 'otkazano'])->default('aktivna');
 
             $table->unsignedBigInteger('client_id');
             $table->foreign('client_id')->references('client_id')->on('clients')->onDelete('cascade');
 
-            $table->string('used_promo_code')->nullable(); // FK ka promo kodu koji je korisnik uneo
+            $table->string('used_promo_code')->nullable(); 
             $table->foreign('used_promo_code')->references('code')->on('promo_codes')->nullOnDelete();
 
-            $table->string('generated_promo_code')->nullable(); // FK ka promo kodu koji je sistem generisao
+            $table->string('generated_promo_code')->nullable(); 
             $table->foreign('generated_promo_code')->references('code')->on('promo_codes')->nullOnDelete();
         });
     }
