@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id('reservation_id');
             $table->string('token', 6) -> unique();
             $table->double('total_price', 8, 2);
-            $table->enum('status', ['aktivna', 'potvrđeno', 'otkazano'])->default('aktivna');
+            $table->enum('status', ['aktivna', 'otkazano'])->default('aktivna');
 
             $table->unsignedBigInteger('client_id');
             $table->foreign('client_id')->references('client_id')->on('clients')->onDelete('cascade');

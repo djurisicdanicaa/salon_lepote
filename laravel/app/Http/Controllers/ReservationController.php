@@ -10,6 +10,7 @@ use App\Models\Service;
 use App\Models\Reservation;
 use App\Models\ReservationItem;
 use App\Models\PromoCode;
+use Carbon\Carbon;
 
 class ReservationController extends Controller
 {
@@ -90,6 +91,7 @@ class ReservationController extends Controller
                 'scheduled_at' => $item['scheduled_at'],
             ]);
         }
+        
 
         if ($usedPromo) {
             $usedPromo->update(['is_used' => true]);
@@ -104,6 +106,8 @@ class ReservationController extends Controller
         ]);
 
         $reservation->update(['generated_promo_code' => $newPromoCode->code]);
+        $this->updateClientDebt($client);
+
 
        return response()->json([
         'message' => 'Uspešna rezervacija! Vaš token je: ' . $reservation->token,
@@ -154,6 +158,7 @@ public function show(Request $request)
         'client' => [
             'first_name' => $reservation->client->first_name,
             'last_name' => $reservation->client->last_name,
+            'total_debt' => $reservation->client->total_debt,
         ],
         'items' => $items,
         'status' => $reservation->status,
@@ -162,8 +167,66 @@ public function show(Request $request)
         'total_price' => $finalPrice,
         'token' => $reservation->token, 
     ]);
-
 }
+
+public function cancel(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email',
+        'token' => 'required|string|size:6',
+    ]);
+
+    $reservation = Reservation::with(['reservationItems', 'generatedCode'])->where('token', $request->token)
+        ->whereHas('client', function ($query) use ($request) {
+            $query->where('email', $request->email);
+        })->first();
+
+    if (!$reservation) {
+        return response()->json(['message' => 'Rezervacija nije pronađena.'], 404);
+    }
+
+    if ($reservation->status === 'otkazano') {
+        return response()->json(['message' => 'Rezervacija je već otkazana.'], 400);
+    }
+
+    $firstItem = $reservation->reservationItems()->orderBy('scheduled_at')->first();
+
+    if (!$firstItem) {
+        return response()->json(['message' => 'Rezervacija nema definisane termine.'], 400);
+    }
+
+    $scheduledAt = $firstItem->scheduled_at instanceof \Carbon\Carbon
+        ? $firstItem->scheduled_at
+        : Carbon::parse($firstItem->scheduled_at);
+
+    if ($scheduledAt->lt(now()->addDays(2))) {
+        return response()->json(['message' => 'Rezervaciju je moguće otkazati najkasnije 2 dana unapred.'], 400);
+    }
+
+    $reservation->status = 'otkazano';
+    $reservation->save();
+
+    $this->updateClientDebt($reservation->client);
+
+
+    if ($reservation->generatedCode && !$reservation->generatedCode->is_used) {
+        $reservation->generatedCode->is_used = true;
+        $reservation->generatedCode->save();
+    }
+
+    return response()->json(['message' => 'Rezervacija je uspešno otkazana.']);
+}
+
+protected function updateClientDebt(Client $client)
+{
+    $debt = $client->reservations()
+        ->where('status', '!=', 'otkazano')
+        ->sum('total_price');
+
+    $client->update(['total_debt' => $debt]);
+}
+
+
 
 
 }

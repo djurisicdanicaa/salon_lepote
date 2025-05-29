@@ -18,8 +18,16 @@ class Client extends Model
     protected $fillable = [
         'first_name',
         'last_name',
-        'email'
+        'email',
+        'total_debt'
     ];
+
+    public function getTotalDebtAttribute()
+    {
+        return $this->reservations()
+            ->where('status', 'aktivna')
+            ->sum('total_price');
+    }
 
     public function reservations()
     {
