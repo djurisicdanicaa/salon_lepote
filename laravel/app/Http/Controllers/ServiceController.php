@@ -8,7 +8,7 @@ use App\Models\Service;
 
 class ServiceController extends Controller
 {
-    public function index()
+    public function loadServices()
     {
         return response()->json(Service::all());
     }

@@ -21,7 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 });
 
-Route::get('/services', [ServiceController::class, 'index']);
+Route::get('/services', [ServiceController::class, 'loadServices']);
 Route::post('/reservations', [ReservationController::class, 'store']);
 Route::post('/reservations/details', [ReservationController::class, 'show']);
 Route::post('/reservations/cancel', [ReservationController::class, 'cancel']);

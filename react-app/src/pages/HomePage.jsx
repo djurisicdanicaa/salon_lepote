@@ -19,12 +19,12 @@ const HomePage = () => {
           <h2>DOBRODOŠLI U NAŠ SALON</h2>
           <p>
             U našem salonu pružamo vrhunske tretmane za negu ruku i stopala. Naša misija je da vas opustimo i obezbedimo
-            savršen izgled vaših noktiju, bilo da želite klasičan manikir, gel manikir, akrilne nokte, ili specijalizovane tretmane za oštećene
-            nokte. Naši stručnjaci će se pobrinuti da svaki tretman bude prilagođen vašim potrebama.
+            besprekoran izgled vaših noktiju - bilo da birate klasičan manikir, gel, akrilne nokte ili tretmane za oštećene
+            nokte. Naši iskusni stručnjaci posvećuju pažnju svakom detalju, prilagođavajući tretman vašim individualnim potrebama.
           </p>
           <p>
-            Uz prijatan ambijent i personalizovanu uslugu, cilj nam je da svaki trenutak proveden u našem salonu bude prijatan i relaksirajuć. 
-            Posetite nas i prepustite se stručnim rukama naših profesionalaca. 
+            U prijatnom ambijentu i uz personalizovanu uslugu, želimo da svaki trenutak u našem salonu bude pravo iskustvo relaksacije i lepote. 
+            Posetite nas i prepustite se sigurnim rukama profesionalaca koji brinu o vašem izgledu i dobrom osećaju.
           </p>
         </div>
       </section>

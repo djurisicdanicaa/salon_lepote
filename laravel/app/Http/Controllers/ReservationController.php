@@ -166,6 +166,7 @@ public function show(Request $request)
         'discount' => $discount,
         'total_price' => $finalPrice,
         'token' => $reservation->token, 
+        'generated_promo_code' => $reservation->generated_promo_code
     ]);
 }
 

@@ -128,6 +128,7 @@ const ReservationDetailsPage = () => {
         <div className="reservation-summary">
           <h2>{reservation.client?.first_name} {reservation.client?.last_name}</h2>
           <p>Token: <strong>{reservation.token}</strong></p>
+          <p>Promo kod: <strong>{reservation.generated_promo_code}</strong></p>
           <p>Status rezervacije: <strong>{reservation.status}</strong></p>
           <p>Ukupna cena: <strong>{reservation.total_price} RSD</strong></p>
 
